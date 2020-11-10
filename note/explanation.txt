@@ -1,0 +1,219 @@
+-> Transpile : babel
+-> Bundle : Webpack
+-> Lint : ESLint
+-> Web Server : Webpack
+-> Generating index.html : Webpack
+-> Loading changes on save : Webpack
+-> One command via npm scripts!
+
+
+(1)src/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+</body>
+</html>
+
+
+
+(2)index.js
+import React from "react";
+import { render } from "react-dom";
+
+const Hi = () => {
+  return <h1>Talha</h1>;
+};
+
+render(<Hi />, document.getElementById("app"));
+
+
+
+
+
+
+(3)webpack.config.dev.js : webpack is for bundling
+
+
+const webpack = require("webpack");
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+process.env.NODE_ENV = "development"; //for babel to know
+
+module.exports = {
+  mode: "development", //set node_env to development and disable production fetures
+  target: "web",
+  devTool: "cheap-module-source-map", //we can see original code in browser
+  entry: "./src/index",
+  //it put our app in memory
+  output: {
+    path: path.resolve(__dirname, "build"),
+    punlicpah: "/", //public url of output directory when it reference in browser
+    filename: "bundle.js", //it is reference to HTML serves from memory
+  },
+
+  //webpack server in development setting
+  devServer: {
+    stats: "minimal", //status in cmd is minimun short and noiseless
+    overlay: true, //overlay any error which occures in browser
+    historyApiFallback: true, //all request sent to index.html - handle by react router
+    //opem issue in webpack due to lattest version of chrome
+    disableHostCheck: true,
+    headers: { "Access-Control-Allow-Origin": "*" },
+    https: false,
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "src/index.html", //where to look for file
+      favicon: "src/favicon.ico",
+    }),
+  ],
+  module: {
+    //what files we want to handle
+    rules: [
+      {
+        test: /\.(js|jsx)$/, //find js or jsx file
+        exclude: /node_modules/, //ignore it
+        use: ["babel-loader"], //what to do with the file, babel run in all our js and webpack bundle that for us
+      },
+      {
+        test: /(\.css)$/,
+        use: ["style-loader", "css-loader"], //allow us to import css and webpack bundle css into single file
+      },
+    ],
+  },
+};
+
+
+
+
+(4)babel(js compiler) : for transcripting, morden js features into browser can undestand
+
+
+-> can be configure using .babelrc || package.json				
+
+"babel": {
+	"presets": [
+		"babel-preset-react-app"
+	]
+}
+
+
+
+-> babel-preset-react-app :  it will tell babel to convert JSX and modern js features like {...}, imports etc..
+
+
+
+
+
+(5)npm script
+
+- package.json
+
+ "scripts": {
+    "start": "webpack-dev-server --config webpack.config.dev.js --port 3000"
+  },
+
+
+
+
+
+
+(6)Eslint : show us errors
+
+-> when we hit save it run 
+
+"eslintConfig": {
+
+	//recommended rules implement automatically
+	//import a file which doesn't exists
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings"
+    ],
+
+    //to eslint undestand our code 
+    "parser": "babel-eslint",
+
+    //using jsx because of react
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+
+    //our working env
+    //eslint undestand global variables from this env
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true,
+      "jest": true
+    },
+
+    //override default rules
+    "rules": {
+      "no-debugger": "off",
+      "no-console": "off",
+      "no-unused-vars": "warn",
+      "react/prop-types": "warn"
+    },
+
+    //required by eslint-plugin-react
+    //detech the version of react we are using otherwise give error : react version not specify
+
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
+
+    //this is a root eslint config for project
+    "root": true
+  }
+
+
+
+
+--> we can run eslint via CMD but let's run it via Webpack
+
+	webpack.config.dev.js
+
+	modules-> rules --> { 
+		use: ["babel-loader", "eslint-loader"],
+	}
+
+--> now webpack will watch our files, recompile our code and run ESLint when we hit save.
+
+
+
+
+
+
+--> NOW :  npm start
+
+
+import React from "react";
+import { render } from "react-dom";
+
+myGlobal = 4;//throw error in cmd
+
+const Hi = () => {
+  return <h1>Talha</h1>;
+};
+
+render(<Hi />, document.getElementById("app"));
+
+
+
+
