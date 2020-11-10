@@ -217,3 +217,60 @@ render(<Hi />, document.getElementById("app"));
 
 
 
+
+-----------------------
+(*)Redux
+-----------------------
+
+-> sharing data in a complex app we use redux
+-> Centralized store all app component can access it via dispatch action 
+
+-> When it is Helpful..?:
+
+    - complex data flows
+    - inter-component communication[no parent-child relationship]
+    - Non-hirerarchical data
+    - Many actions[write,add,delete for complex Data Structures]
+    - Same data in many places
+
+  
+-> 3 Principles:
+
+    (1)One Immutable store [can not change directly but via actions]
+    (2)Actions trigger changes
+    (3)Reducers : state changes handle by pure function called reducers
+
+  
+-> Diffrences: [Flux and Redux]
+
+    (1)Flux : unidirectional_data_flow,  centrazlied store(multiple), use actions for updating store
+    (2)Redux : unidirectional_data_flow,  centrazlied store(single), use actions for updating store
+
+    BUT,
+
+    (2)Redux : 
+      -Reducers:  it uses Reduces which is a pure function which take action and state and return new state
+      -Containers: it is a React component contain neccessory logic which they passed to presentation(Dumb child) component via Props[easy to test, simple to use]
+      -Immutability: Redux store is Immutable
+
+    AND MORE 😋
+
+    (1)Flux🥱 :
+      - Action --> Dispatcher --> Store --> React
+      - Each store must connect to the dispatcher via eventEmitter
+
+    (2)REDUX🤪 : 
+      - Action --> Store --> React, 
+      - Store --> Reducers, Reducers --> Store
+      - It relays on reducers[pure function that's why it doesn't need dispatcher]
+      - Each Action handle by 1 or more Reducer which update single Store
+      - State is immutable in Redux, Reducers return new updated copy of the state which upate the store
+
+    AND MORE 😋
+
+    (1)Flux : 
+      -Store: logic + state, multiple store[stores are disconnected], Mutable
+      -Connection : React compo subscribe to stores
+    (2)Redux : 
+      -Store: logic[with reducers]  +  state, single store[single source of truth][connected with reducers], Immutable
+      -Connection : Container components utilize connect

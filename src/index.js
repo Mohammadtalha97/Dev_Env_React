@@ -1,10 +1,15 @@
+import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import React from "react";
 import { render } from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 
-// myGlobal = 4;
+import App from "./components/App";
 
-const Hi = () => {
-  return <h1>Talha</h1>;
-};
-
-render(<Hi />, document.getElementById("app"));
+render(
+  <Router>
+    <App />
+  </Router>,
+  document.getElementById("app")
+);
