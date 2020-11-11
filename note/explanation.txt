@@ -274,3 +274,59 @@ render(<Hi />, document.getElementById("app"));
     (2)Redux : 
       -Store: logic[with reducers]  +  state, single store[single source of truth][connected with reducers], Immutable
       -Connection : Container components utilize connect
+
+
+-------------------------------------
+(*)Why State Is Immutable Is Redux 
+-------------------------------------
+
+-> Clarity: "in which file state update..😖", "it's in reducer stupid 😆"
+
+-> Performance:  
+  - 1 complex object, if that was change redux need to check at every state but if new state than balle balle 💃
+  - reference comparition : if old state is not referencing to same object in memory which means state is changed and re-render component
+
+-> Awesome Sauce: Redux developer tools[time-travel debugging, undo/redo]
+
+
+
+----------------
+(*)Note
+----------------
+
+-> react-redux library used to connect react with redux store
+-> (1)Provider: Attaches app to store (2)Connect
+-> (1)mapStateToProps : what part of a store we want to use in component as a Props
+-> (2)mapDispatchToProps : what action do i want to pass as props
+--> 
+
+function mapDispatchToProps(dispatch){
+  return{
+    actions: bindActionCreators(actions, dispatch)
+    //wraps action creator in dispatch call for you
+  };
+}
+
+
+
+----------------------
+(*)Chat with redux
+----------------------
+
+->React - hey courseAction, someone clicked this "save course" button.
+->Action - Thanks react! i will dispatch an action so reducers that care can update state.
+->Reducer - Ah, thanks action. I see you passed me the current state and the action to perform. i'll make a new copy of the state and return it.
+->Store - Thanks for updating the satte reducer. i'll make sure that all connected components are aware.
+
+
+->React-Redux - Woah, thanks for the new data Mr.store. I'll now intelligently determine if i should tell React about this change so that it only has to bother with updating the UI when necessary.
+
+
+------------------
+(*)Thunk
+------------------
+
+--> support async api call
+--> a function which returns a function
+--> anything impure is wrapped in thunk, later it called by middlware to actually cause the effect.
+--> it has access to Store  
