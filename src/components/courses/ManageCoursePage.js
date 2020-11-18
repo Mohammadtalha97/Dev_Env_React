@@ -7,6 +7,8 @@ import { loadCourse, saveCourse } from "../../redux/actions/courseActions";
 import CourseForm from "./CourseForm";
 
 import { newCourse } from "../../../tools/mockData";
+import Spinner from "../common/Spinner";
+import { toast } from "react-toastify";
 
 function ManageCoursePage({
   loadCourse,
@@ -19,6 +21,7 @@ function ManageCoursePage({
 }) {
   const [course, setCourse] = useState({ ...props.course });
   const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
   useEffect(() => {
     if (courses.length === 0) {
       loadCourse().catch((error) => alert("Loading courses failed" + error));
@@ -38,20 +41,46 @@ function ManageCoursePage({
     }));
   }
 
-  function handleSave(event) {
-    event.preventDefault();
-    saveCourse(course).then(() => {
-      history.push("/courses");
-    });
+  function formIsValid() {
+    const { title, authorId, category } = course;
+    const errors = {};
+
+    if (!title) errors.title = "Title Is Required";
+    if (!authorId) errors.author = "Author Is Required";
+    if (!category) errors.category = "Category Is Required";
+
+    setErrors(errors);
+    //form is valid when error obj  has no properties
+    return Object.keys(errors).length === 0;
   }
 
-  return (
+  function handleSave(event) {
+    event.preventDefault();
+    if (!formIsValid()) return;
+    setSaving(true);
+    saveCourse(course)
+      .then(() => {
+        toast.success("Course Saved");
+        history.push("/courses");
+      })
+      .catch((error) => {
+        setSaving(false);
+        setErrors({
+          onSave: error.message,
+        });
+      });
+  }
+
+  return authors.length === 0 || courses.length === 0 ? (
+    <Spinner />
+  ) : (
     <CourseForm
       onChange={handleChange}
       course={course}
       errors={errors}
       authors={authors}
       onSave={handleSave}
+      saving={saving}
     />
   );
 }
